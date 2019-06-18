@@ -18,9 +18,7 @@ Requirements
 - Pillow
 - spidev
 
-Also, you need to set SPI ON by ``raspi-config``.
-
-::
+Also, you need to set SPI on by ``raspi-config``.
 
     $ sudo raspi-config
 
