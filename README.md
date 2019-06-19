@@ -8,9 +8,7 @@ py_mip_sample is Python sample program of JDI MIP reflective color display.
 MIP reflective color display(Japan Display Inc.) product information.
 https://os.mbed.com/teams/JapanDisplayInc/wiki/MIP-reflective-color-display
 
-Description page (in Japanese)
-
-[MIPカラー反射型液晶モジュールをRaspberry Pi Zeroで使う](https://qiita.com/hishi/items/669ce474fcd76bdce1f1)
+Description page (in Japanese): [MIPカラー反射型液晶モジュールをRaspberry Pi Zeroで使う](https://qiita.com/hishi/items/669ce474fcd76bdce1f1)
 
 Requirements
 ------------
