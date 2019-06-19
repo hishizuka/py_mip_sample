@@ -12,6 +12,7 @@ Images are obtained from the mbed sample program.
 https://os.mbed.com/teams/JapanDisplayInc/code/MIP8f_FRDM_sample/
 
 Description page (in Japanese)
+
 [MIPカラー反射型液晶モジュールをRaspberry Pi Zeroで使う](https://qiita.com/hishi/items/669ce474fcd76bdce1f1)
 
 Requirements
