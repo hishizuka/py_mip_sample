@@ -12,6 +12,7 @@ Images are obtained from the mbed sample program.
 https://os.mbed.com/teams/JapanDisplayInc/code/MIP8f_FRDM_sample/
 
 Description page (in Japanese)
+
 [MIPカラー反射型液晶モジュールをRaspberry Pi Zeroで使う](https://qiita.com/hishi/items/669ce474fcd76bdce1f1)
 
 Requirements
@@ -27,4 +28,10 @@ Also, you need to set SPI on by ``raspi-config``.
 
     $ sudo raspi-config
 
+
+Application Example
+------------
+
+Raspberry Pi based cyclecomputer(in development)
+![mip.png](https://qiita-image-store.s3.ap-northeast-1.amazonaws.com/0/100741/3d7ee1ee-4c27-2e55-cb0a-6a71e228fa4f.png)
 
