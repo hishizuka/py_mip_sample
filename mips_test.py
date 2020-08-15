@@ -18,7 +18,7 @@ CHANNEL = 0
 DISP = 13
 SCS = 15
 VCOMSEL = 11
-BACKLIGHT = 7
+BACKLIGHT = 7 #if GPIO 7 is already used with other devics, set 12 etc
 
 #0x90 4bit update mode
 #0x80 3bit update mode (fast)
@@ -32,40 +32,47 @@ SCREEN_HEIGHT = 240
 class MipDisplay():
 
     spi = None
-    pre_img = np.array([])
     
     buff_width = int(SCREEN_WIDTH*3/8)+2 #for 3bit update mode
     #buff_width = int(SCREEN_WIDTH*4/8)+2 #for 4bit update mode
 
     def __init__(self):
       
-        if IS_RASPI:
-            self.spi = spidev.SpiDev()
-            self.spi.open(0, 0)
-            self.spi.mode = 0b00 #SPI MODE0
-            #self.spi.max_speed_hz = 2000000 #MAX 2MHz
-            self.spi.max_speed_hz =  7000000 #overclocking
-            self.spi.no_cs 
-            time.sleep(0.1)     #Wait
-             
-            GPIO.setmode(GPIO.BOARD)
-            GPIO.setup(DISP, GPIO.OUT)
-            GPIO.setup(SCS, GPIO.OUT)
-            GPIO.setup(VCOMSEL, GPIO.OUT)
-             
-            GPIO.output(SCS, 0)     #1st=L
-            GPIO.output(DISP, 1)    #1st=Display On
-            #GPIO.output(DISP, 0)   #1st=No Display
-            #GPIO.output(VCOMSEL, 0) #L=VCOM(1Hz)
-            GPIO.output(VCOMSEL, 1) #L=VCOM(1Hz)
-            time.sleep(0.1)
+        if not IS_RASPI:
+            return
+        
+        self.spi = spidev.SpiDev()
+        self.spi.open(0, 0)
+        self.spi.mode = 0b00 #SPI MODE0
+        #self.spi.max_speed_hz = 2000000 #MAX 2MHz
+        self.spi.max_speed_hz =  9500000 #overclocking
+        self.spi.no_cs 
+        time.sleep(0.1)     #Wait
+         
+        GPIO.setmode(GPIO.BOARD)
+        GPIO.setup(DISP, GPIO.OUT)
+        GPIO.setup(SCS, GPIO.OUT)
+        GPIO.setup(VCOMSEL, GPIO.OUT)
+         
+        GPIO.output(SCS, 0)     #1st=L
+        GPIO.output(DISP, 1)    #1st=Display On
+        #GPIO.output(DISP, 0)   #1st=No Display
+        #GPIO.output(VCOMSEL, 0) #L=VCOM(1Hz)
+        GPIO.output(VCOMSEL, 1) #L=VCOM(1Hz)
+        time.sleep(0.1)
 
-            GPIO.setup(BACKLIGHT, GPIO.OUT)
-            #self.backlight = GPIO.PWM(BACKLIGHT, 60)
-            self.backlight = GPIO.PWM(BACKLIGHT, 64)
-            self.backlight.start(0)
+        GPIO.setup(BACKLIGHT, GPIO.OUT)
+        #self.backlight = GPIO.PWM(BACKLIGHT, 60)
+        self.backlight = GPIO.PWM(BACKLIGHT, 64)
+        self.backlight.start(0)
 
-            self.clear()
+        self.pre_img = np.zeros((SCREEN_HEIGHT, self.buff_width), dtype='uint8')
+        self.img_buff_rgb8 = np.empty((SCREEN_HEIGHT, self.buff_width), dtype='uint8')
+        self.img_buff_rgb8[:,0] = UPDATE_MODE 
+        self.img_buff_rgb8[:,1] = np.arange(SCREEN_HEIGHT)
+        self.img_buff_rgb8[:,0] = self.img_buff_rgb8[:,0] + (np.arange(SCREEN_HEIGHT) >> 8)
+
+        self.clear()
     
     def clear(self):
         if not IS_RASPI:
@@ -132,22 +139,20 @@ class MipDisplay():
         t = datetime.datetime.now()
 
         #3bit mode update
-        im_array = ((im_array > 128).astype('uint8')).reshape(SCREEN_HEIGHT,SCREEN_WIDTH*3)
-        img_buff_rgb8 = np.empty((SCREEN_HEIGHT, self.buff_width), dtype='uint8')
+        self.img_buff_rgb8[:,2:] = np.packbits(
+            ((im_array > 128).astype('uint8')).reshape(SCREEN_HEIGHT,SCREEN_WIDTH*3),
+            axis=1
+            )
         img_bytes = bytearray()
-        
-        img_buff_rgb8[:,0] = UPDATE_MODE 
-        img_buff_rgb8[:,1] = np.arange(SCREEN_HEIGHT)
-        img_buff_rgb8[:,2:] = np.packbits(im_array, axis=1)
-        
+
         #differential update
-        if self.pre_img.size == 0:
-            img_bytes = img_buff_rgb8.tobytes()
-        else:
-            diff_lines = np.where(np.sum((img_buff_rgb8 == self.pre_img), axis=1) != self.buff_width)[0] 
-            print("diff ", int(len(diff_lines)/SCREEN_HEIGHT*100), "%")
-            img_bytes = img_buff_rgb8[diff_lines].tobytes()
-        self.pre_img = img_buff_rgb8
+        rewrite_flag = False
+        diff_lines = np.where(np.sum((self.img_buff_rgb8 == self.pre_img), axis=1) != self.buff_width)[0] 
+        print("diff ", int(len(diff_lines)/SCREEN_HEIGHT*100), "%")
+        img_bytes = self.img_buff_rgb8[diff_lines].tobytes()
+        if len(diff_lines) > 0:
+            rewrite_flag = True
+        self.pre_img[diff_lines] = self.img_buff_rgb8[diff_lines]
 
         print("Loading images... :", (datetime.datetime.now()-t).total_seconds(),"sec")
 
