@@ -204,6 +204,7 @@ class MipDisplay():
 if __name__ == '__main__':
     m = MipDisplay() 
     m.set_brightness(50)
+    #Get image from https://os.mbed.com/teams/JapanDisplayInc/code/MIP8f_FRDM_sample/. Need "LPM027M128x (400x240)".
     m.pil_to_screen('img/004_blood3.bmp')
     time.sleep(1)
     m.pil_to_screen('img/004_blood3.bmp')
