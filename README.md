@@ -35,6 +35,6 @@ Raspberry Pi Zero based cyclecomputer(in development)
 Reference
 ------------
 
-Images are obtained from the mbed sample program.
+Images are obtained from the mbed sample program.(LPM027M128x (400x240))
 https://os.mbed.com/teams/JapanDisplayInc/code/MIP8f_FRDM_sample/
 
