@@ -14,7 +14,7 @@ print("SPI LOAD:", IS_RASPI)
 print("##### PYTHON NIL #####")
 
 DISP = 27
-SCS = 22
+SCS = 23 #22
 VCOMSEL = 17
 BACKLIGHT = 18
 
