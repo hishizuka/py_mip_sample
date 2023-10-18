@@ -15,7 +15,7 @@ print("SPI LOAD:", IS_RASPI)
 print("##### PYTHON NIL #####")
 
 DISP = 27
-SCS = 22
+SCS = 23 #22
 VCOMSEL = 17
 BACKLIGHT = 4 #if GPIO 4(pin7) is already used with other devics, set 18(pin12) etc
 
