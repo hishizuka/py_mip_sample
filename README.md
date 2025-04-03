@@ -1,7 +1,7 @@
 py_mip_sample
 ===========
 
-py_mip_sample is Python sample program of JDI MIP reflective color display.
+py_mip_sample is Python sample program of JDI MIP reflective color display (JDI LPM027M128B / LPM027M128C).
 
 [![youtube](http://img.youtube.com/vi/c4KMGHixH8Y/0.jpg)](http://www.youtube.com/watch?v=c4KMGHixH8Y)
 
